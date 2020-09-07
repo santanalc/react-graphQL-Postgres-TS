@@ -12,7 +12,7 @@ import redis from "redis";
 import session from "express-session";
 import connectRedis from "connect-redis";
 import { MyContext } from "./types";
-
+import cors from "cors";
 const main = async () => {
   const orm = await MikroORM.init(microConfig);
   await orm.getMigrator().up();
@@ -24,7 +24,12 @@ const main = async () => {
 
   const RedisStore = connectRedis(session);
   const redisClient = redis.createClient();
-
+  app.use(
+    cors({
+      origin: "http://localhost:3000",
+      credentials: true,
+    })
+  );
   app.use(
     session({
       name: "qid",
@@ -50,6 +55,11 @@ const main = async () => {
       validate: false,
     }),
     context: ({ req, res }): MyContext => ({ em: orm.em, req, res }),
+  });
+
+  apolloServer.applyMiddleware({
+    app,
+    cors: false,
   });
 
   apolloServer.applyMiddleware({ app });
