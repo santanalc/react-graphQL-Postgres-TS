@@ -18,8 +18,8 @@ const main = async () => {
   await orm.getMigrator().up();
 
   const app = express();
-  app.listen(4000, () => {
-    console.log("server started on localhost:4000");
+  app.listen(4400, () => {
+    console.log("server started on localhost:4400");
   });
 
   const RedisStore = connectRedis(session);

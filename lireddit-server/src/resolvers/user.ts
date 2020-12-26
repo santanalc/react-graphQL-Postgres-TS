@@ -7,7 +7,6 @@ import {
   Field,
   ObjectType,
   Query,
-  ID,
 } from "type-graphql";
 import { MyContext } from "src/types";
 import { User } from "../entities/User";
@@ -42,20 +41,21 @@ class UserResponse {
 
 @Resolver()
 export class UserResolver {
-
-  @Query(( ) => User, {nullable: true}) 
-  async me(
-    @Ctx() {req, em}:MyContext
-  ){
+  @Query(() => User, { nullable: true })
+  async me(@Ctx() { req, em }: MyContext) {
     //you are not logged in
-    if(!req.session?.userId){
-      return null
+    if (!req.session?.userId) {
+      return null;
     }
 
-    const user = await em.findOne(User, {id:req.session.userId});
-    return user
+    const user = await em.findOne(User, { id: req.session.userId });
+    return user;
   }
 
+  @Query(() => [User])
+  users(@Ctx() { em }: MyContext): Promise<User[]> {
+    return em.find(User, {});
+  }
 
   @Mutation(() => UserResponse)
   async register(
