@@ -11,7 +11,7 @@ import {
 import { MyContext } from "src/types";
 import { User } from "../entities/User";
 import argon2 from "argon2";
-
+import { EntityManager } from "@mikro-orm/postgresql";
 @InputType()
 class UserNamePasswordInput {
   @Field()
@@ -62,6 +62,7 @@ export class UserResolver {
     @Arg("options", () => UserNamePasswordInput) options: UserNamePasswordInput,
     @Ctx() { em }: MyContext
   ): Promise<UserResponse> {
+    console.log(options, "teste");
     if (options.username.length <= 2) {
       return {
         errors: [
@@ -77,20 +78,34 @@ export class UserResolver {
       return {
         errors: [
           {
-            field: "passwrod",
+            field: "password",
             message: "Lenght need to be greater than 3",
           },
         ],
       };
     }
     const hashedPassword = await argon2.hash(options.password);
-    const user = em.create(User, {
-      username: options.username,
-      password: hashedPassword,
-    });
-
+    //BUG, por  isso usar a query
+    // const user = em.create(User, {
+    //   username: options.username,
+    //   password: hashedPassword,
+    // });
+    let user;
     try {
-      await em.persistAndFlush(user);
+      const result = await (em as EntityManager)
+        .createQueryBuilder(User)
+        .getKnexQuery()
+        .insert({
+          username: options.username,
+          password: hashedPassword,
+          created_at: new Date(),
+          updated_at: new Date(),
+        })
+        .returning("*");
+
+      user = result[0];
+      //BUG, por  isso usar a query
+      // await em.persistAndFlush(user);
     } catch (err) {
       if (err.code === "23505") {
         return {
