@@ -8,7 +8,8 @@
     "dev": "nodemon dist/index.js",
     "start": "node dist/index.js",
     "start2": "ts-node src/index.ts",
-    "create:migration": "mikro-orm migration:create"
+    "create:migration": "mikro-orm migration:create",
+    "kill": "killall node"
   },
   "repository": {
     "type": "git",
@@ -37,6 +38,9 @@
     "@mikro-orm/core": "^4.0.0-alpha.0",
     "@mikro-orm/migrations": "^4.0.0-alpha.0",
     "@mikro-orm/postgresql": "^4.0.0-alpha.0",
+    "@types/ioredis": "^4.17.10",
+    "@types/nodemailer": "^6.4.0",
+    "@types/uuid": "^8.3.0",
     "apollo-server-express": "^2.17.0",
     "argon2": "^0.27.0",
     "connect-redis": "^5.0.0",
@@ -44,10 +48,12 @@
     "express": "^4.17.1",
     "express-session": "^1.17.1",
     "graphql": "^15.3.0",
+    "ioredis": "^4.19.4",
+    "nodemailer": "^6.4.17",
     "pg": "^8.3.3",
-    "redis": "^3.0.2",
     "reflect-metadata": "^0.1.13",
-    "type-graphql": "^1.0.0"
+    "type-graphql": "^1.0.0",
+    "uuid": "^8.3.2"
   },
   "mikro-orm": {
     "useTsNode": true,
